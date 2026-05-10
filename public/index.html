@@ -358,6 +358,16 @@ footer{background:var(--ink);padding:3rem 4rem;display:flex;justify-content:spac
     <form id="contact-form" class="contact-form" action="http://localhost:8080/post/message" method="POST">
       <input type="text" name="name" placeholder="Your name" required>
       <input type="email" name="email" placeholder="Work email" required>
+      <select name="interest">
+        <option value="">What are you looking for?</option>
+        <option value="cs-rep">Customer Support Rep</option>
+        <option value="sdr">Sales SDR / BDR</option>
+        <option value="dev">IT / Developer</option>
+        <option value="cs-training">CS Training Programme</option>
+        <option value="sales-training">Sales Training Programme</option>
+        <option value="it-training">IT Training Programme</option>
+        <option value="multiple">Multiple / not sure yet</option>
+      </select>
       <input type="text" name="company" placeholder="Company name">
       <button type="submit" class="btn-gold" style="cursor:pointer;text-align:center">Send message</button>
       <div id="form-msg"></div>
