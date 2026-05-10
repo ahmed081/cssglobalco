@@ -373,7 +373,7 @@ footer{background:var(--ink);padding:3rem 4rem;display:flex;justify-content:spac
     <li><a href="pricing.html">Pricing</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
-  <div class="footer-copy">© 2025 CSS — Customers, Sales &amp; Solutions<br>Casablanca, Morocco · info@css-solutions.ma</div>
+  <div class="footer-copy">© 2025 CSS — Customers, Sales &amp; Solutions<br>Casablanca, Morocco · contact@cssglobalco.com</div>
 </footer>
 <script>
 const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
@@ -395,8 +395,8 @@ if(form){form.addEventListener('submit',async function(e){
   try{
     const data=Object.fromEntries(new FormData(form));const r=await fetch(form.action,{method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'application/json','Accept':'application/json'}});
     if(r.ok){msg.textContent="Got it — we'll be in touch within 24 hours.";msg.style.color='#1a6e42';form.reset();}
-    else{msg.textContent='Something went wrong. Email info@css-solutions.ma';msg.style.color='#c0392b';}
-  }catch{msg.textContent='Network error. Email info@css-solutions.ma';msg.style.color='#c0392b';}
+    else{msg.textContent='Something went wrong. Email contact@cssglobalco.com';msg.style.color='#c0392b';}
+  }catch{msg.textContent='Network error. Email contact@cssglobalco.com';msg.style.color='#c0392b';}
   btn.textContent='Send message';btn.style.opacity='1';
 })}
 </script>
