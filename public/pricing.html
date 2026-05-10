@@ -23,7 +23,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
@@ -453,7 +453,7 @@ footer{background:var(--ink);padding:3rem 4rem;display:flex;justify-content:spac
     <p class="cta-sub">15 minutes. No pitch. Just an honest conversation about whether this fits your stage and what it would cost.</p>
   </div>
   <div class="cta-right reveal">
-    <form id="contact-form" class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+    <form id="contact-form" class="contact-form" action="http://localhost:8080/post/message" method="POST">
       <input type="text" name="name" placeholder="Your name" required>
       <input type="email" name="email" placeholder="Work email" required>
       <select name="interest">
@@ -501,7 +501,7 @@ if(form){form.addEventListener('submit',async function(e){
   const msg=document.getElementById('form-msg'),btn=form.querySelector('button[type=submit]');
   btn.textContent='Sending...';btn.style.opacity='.7';
   try{
-    const r=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}});
+    const data=Object.fromEntries(new FormData(form));const r=await fetch(form.action,{method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'application/json','Accept':'application/json'}});
     if(r.ok){msg.textContent="Got it — we'll be in touch within 24 hours.";msg.style.color='#1a6e42';form.reset();}
     else{msg.textContent='Something went wrong. Email info@css-solutions.ma';msg.style.color='#c0392b';}
   }catch{msg.textContent='Network error. Email info@css-solutions.ma';msg.style.color='#c0392b';}
