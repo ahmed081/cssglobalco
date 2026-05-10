@@ -15,6 +15,8 @@
 
 <title>Services — CSS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>.flatpickr-day.flatpickr-disabled,.flatpickr-day.flatpickr-disabled:hover{background:transparent;color:#ccc;cursor:not-allowed;text-decoration:line-through}.flatpickr-input{font-family:'Outfit',sans-serif;font-size:14px;padding:12px 16px;border:1px solid var(--faint);background:var(--cream);color:var(--ink);outline:none;width:100%;transition:border-color .2s;box-sizing:border-box;cursor:pointer}.flatpickr-input:focus{border-color:var(--gold)}</style>
 <style>
 :root{
   --ink:#0d0d0d;--paper:#f5f2ec;--cream:#faf8f3;--gold:#b8862c;
@@ -74,6 +76,12 @@ section{padding:7rem 4rem}
 .contact-form select{appearance:none;background:var(--cream)}
 .contact-form textarea{resize:vertical;min-height:80px}
 #form-msg{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-align:center;min-height:16px;color:var(--mid)}
+.appt-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);margin-bottom:.3rem;display:block}
+.time-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.time-slot{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:9px 4px;border:1px solid var(--faint);background:var(--cream);color:var(--ink);cursor:pointer;text-align:center;transition:all .2s;line-height:1}
+.time-slot:hover{border-color:var(--gold);background:#fdf6e3}
+.time-slot.selected{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.tz-note{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--mid);text-align:right;margin-top:.15rem}
 
 /* CTA SECTION */
 .cta-section{background:var(--charcoal);padding:7rem 4rem;display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center}
@@ -460,7 +468,7 @@ footer{background:var(--ink);padding:3rem 4rem;display:flex;justify-content:spac
     <p class="cta-sub">15 minutes. No pitch. Just an honest conversation about whether this fits your stage and what it would cost.</p>
   </div>
   <div class="cta-right reveal">
-    <form id="contact-form" class="contact-form" action="https://api.cssglobalco.com/post/message" method="POST">
+    <form id="contact-form" class="contact-form" action="http://localhost:8080/post/message" method="POST">
       <input type="text" name="name" placeholder="Your name" required>
       <input type="email" name="email" placeholder="Work email" required>
       <select name="interest">
@@ -474,6 +482,28 @@ footer{background:var(--ink);padding:3rem 4rem;display:flex;justify-content:spac
         <option value="multiple">Multiple / not sure yet</option>
       </select>
       <input type="text" name="company" placeholder="Company name">
+      <div>
+        <span class="appt-label">Preferred appointment date</span>
+        <input type="text" name="appointment_date" id="appt-date" placeholder="Select a date" readonly>
+        <div id="date-note" class="tz-note"></div>
+      </div>
+      <div>
+        <span class="appt-label">Preferred time slot</span>
+        <div class="time-slots" id="time-slots">
+          <button type="button" class="time-slot" data-time="09:00">9:00 AM</button>
+          <button type="button" class="time-slot" data-time="10:00">10:00 AM</button>
+          <button type="button" class="time-slot" data-time="11:00">11:00 AM</button>
+          <button type="button" class="time-slot" data-time="12:00">12:00 PM</button>
+          <button type="button" class="time-slot" data-time="13:00">1:00 PM</button>
+          <button type="button" class="time-slot" data-time="14:00">2:00 PM</button>
+          <button type="button" class="time-slot" data-time="15:00">3:00 PM</button>
+          <button type="button" class="time-slot" data-time="16:00">4:00 PM</button>
+          <button type="button" class="time-slot" data-time="17:00">5:00 PM</button>
+        </div>
+        <input type="hidden" name="appointment_time" id="appt-time">
+        <div class="tz-note" id="tz-display"></div>
+      </div>
+      <input type="hidden" name="timezone" id="user-timezone">
       <button type="submit" class="btn-gold" style="cursor:pointer;text-align:center">Send message</button>
       <div id="form-msg"></div>
     </form>

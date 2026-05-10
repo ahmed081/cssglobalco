@@ -1,1 +1,12 @@
 .idea/
+
+# Server / infra configs (sensitive)
+public/config
+
+# Node
+node_modules/
+admin/node_modules/
+admin/dist/
+admin/.env
+.env
+*.env
