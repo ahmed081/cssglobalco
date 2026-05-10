@@ -8,5 +8,7 @@ node_modules/
 admin/node_modules/
 admin/dist/
 admin/.env
+admin/vite-dev*.log
+admin/*.tsbuildinfo
 .env
 *.env

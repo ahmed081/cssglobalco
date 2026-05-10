@@ -1,8 +1,88 @@
 export type Stage = 'New' | 'Screening' | 'Interview' | 'Offer Sent' | 'Placed' | 'Rejected' | 'Withdrawn' | 'On Hold';
-export type Role = 'Customer Support' | 'Sales' | 'IT Support' | 'Engineering' | 'Admissions Officer' | 'Communications Officer';
+export type Role =
+    'Customer Support'
+    | 'Sales'
+    | 'IT Support'
+    | 'Engineering'
+    | 'Admissions Officer'
+    | 'Communications Officer';
 export type JobStatus = 'Open' | 'On Hold' | 'Closed';
 export type View = 'dashboard' | 'jobs' | 'pipeline' | 'candidates' | 'calendar' | 'settings';
 export type WorkMode = 'Remote' | 'Hybrid' | 'Onsite';
-export interface Candidate {id:number; fn:string; ln:string; role:Role; sen:string; email:string; phone:string; linkedin:string; location:string; langs:string[]; stage:Stage; rat:number; skills:string[]; cv:string; notes:string; clientNotes:string; source:string; salary:string; availability:string; years:number; company:string; assignedJobId:string; recruiter:string; tags:string[]; date:string; updated:string; lastActivity:string; interviewDate:string; avatar?:string; stageHistory:{stage:Stage;date:string;note:string}[]; attachments:string[];}
-export interface JobRole {id:string; title:string; dept:Role; client:string; loc:string; sen:string; status:JobStatus; langs:string[]; desc:string; date:string; salary:string; openings:number; deadline:string; priority:'Low'|'Medium'|'High'|'Urgent'; recruiter:string; workMode:WorkMode; contractType:string; requiredSkills:string[]; niceSkills:string[];}
-export interface UiState {view:View; roleFilter:''|Role; search:string; sidebarOpen:boolean; selectedCandidateId:number|null; editingCandidateId:number|null; selectedJobId:string|null; candidateModal:boolean; jobModal:boolean; dateRange:'7d'|'30d'|'90d'|'all'; stageFilter:''|Stage; langFilter:string; sort:'newest'|'name'|'rating'|'activity'; selectedIds:number[]; session:{user:string; role:string; notifications:number; authenticated:boolean};}
+export type EntityId = string | number;
+
+export interface Candidate {
+    id: EntityId;
+    fn: string;
+    ln: string;
+    role: Role;
+    sen: string;
+    email: string;
+    phone: string;
+    linkedin: string;
+    location: string;
+    langs: string[];
+    stage: Stage;
+    rat: number;
+    skills: string[];
+    cv: string;
+    notes: string;
+    clientNotes: string;
+    source: string;
+    salary: string;
+    availability: string;
+    years: number;
+    company: string;
+    assignedJobId: string;
+    recruiter: string;
+    tags: string[];
+    date: string;
+    updated: string;
+    lastActivity: string;
+    interviewDate: string;
+    avatar?: string;
+    stageHistory: { stage: Stage; date: string; note: string }[];
+    attachments: string[];
+}
+
+export interface JobRole {
+    id: string;
+    title: string;
+    dept: Role;
+    client: string;
+    clientCompanyId?: string;
+    loc: string;
+    sen: string;
+    status: JobStatus;
+    langs: string[];
+    desc: string;
+    date: string;
+    salary: string;
+    openings: number;
+    deadline: string;
+    priority: 'Low' | 'Medium' | 'High' | 'Urgent';
+    recruiter: string;
+    workMode: WorkMode;
+    contractType: string;
+    requiredSkills: string[];
+    niceSkills: string[];
+    candidateCount?: number;
+}
+
+export interface UiState {
+    view: View;
+    roleFilter: '' | Role;
+    search: string;
+    sidebarOpen: boolean;
+    selectedCandidateId: EntityId | null;
+    editingCandidateId: EntityId | null;
+    selectedJobId: string | null;
+    candidateModal: boolean;
+    jobModal: boolean;
+    dateRange: '7d' | '30d' | '90d' | 'all';
+    stageFilter: '' | Stage;
+    langFilter: string;
+    sort: 'newest' | 'name' | 'rating' | 'activity';
+    selectedIds: EntityId[];
+    session: { user: string; role: string; notifications: number; authenticated: boolean };
+}

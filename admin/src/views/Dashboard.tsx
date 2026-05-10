@@ -1,2 +1,91 @@
-import { actions } from '../store/recruitSlice';import { useAppDispatch,useAppSelector } from '../store/hooks';import { Card,Badge,Button } from '../components/ui';import { MAIN_STAGES,ROLE_ICONS,ROLES,STAGE_COLORS } from '../constants';
-export function Dashboard(){const d=useAppDispatch();const {candidates,jobs,ui}=useAppSelector(s=>s.recruit);const total=candidates.length,placed=candidates.filter(c=>c.stage==='Placed').length,active=candidates.filter(c=>!['Placed','Rejected','Withdrawn'].includes(c.stage)).length,open=jobs.filter(j=>j.status==='Open').length;const stat=(v:number,l:string,s:string,cb:()=>void)=><Card className="stat-card clickable" onClick={cb as any}><div className="stat-card-val">{v}</div><div className="stat-card-lbl">{l}</div><div className="stat-card-sub">{s}</div></Card>;return <><div className="toolbar"><select className="fsel" value={ui.dateRange} onChange={e=>d(actions.setDateRange(e.target.value as any))}><option value="7d">Last 7 days</option><option value="30d">Last 30 days</option><option value="90d">Last 90 days</option><option value="all">All time</option></select><Button onClick={()=>alert('CSV export preview')}>Export</Button><Button onClick={()=>d(actions.resetDemoData())}>Reset demo data</Button></div><div className="stats-row">{stat(total,'Total Candidates','+18% vs previous period',()=>d(actions.setView('candidates')))}{stat(placed,'Placed','Current month preview',()=>d(actions.setStageFilter('Placed')))}{stat(active,'In Pipeline','Avg. 8 days per stage',()=>d(actions.setView('pipeline')))}{stat(open,'Open Roles','5.3 candidates per role',()=>d(actions.setView('jobs')))}</div><div className="dash-grid"><Card><h3>Pipeline Conversion</h3>{MAIN_STAGES.map(s=>{const n=candidates.filter(c=>c.stage===s).length;const pct=total?Math.round(n/total*100):0;const [col]=STAGE_COLORS[s];return <div className="bar-row" key={s} onClick={()=>{d(actions.setStageFilter(s));d(actions.setView('candidates'))}}><span>{s}</span><div><i style={{width:`${pct}%`,background:col}}/></div><b style={{color:col}}>{pct}%</b></div>})}</Card><Card><h3>By Role</h3>{ROLES.map(r=><div key={r} className="mini-row" onClick={()=>d(actions.setRoleFilter(r))}><span>{ROLE_ICONS[r]} {r}</span><b>{candidates.filter(c=>c.role===r).length}</b></div>)}</Card><Card><h3>Source Breakdown</h3>{['LinkedIn','Referral','Website','Indeed','Database'].map(src=><div className="mini-row" key={src}><span>{src}</span><b>{candidates.filter(c=>c.source===src).length}</b></div>)}</Card><Card><h3>Recent Candidates</h3>{[...candidates].sort((a,b)=>b.id-a.id).slice(0,5).map(c=><div className="candidate-line" key={c.id} onClick={()=>d(actions.selectCandidate(c.id))}><div className="avatar-mini">{c.fn[0]}{c.ln[0]}</div><div><b>{c.fn} {c.ln}</b><p>{c.role} · {c.lastActivity}</p></div><Badge stage={c.stage}>{c.stage}</Badge></div>)}<Button onClick={()=>d(actions.setView('candidates'))}>View all recent candidates</Button></Card><Card><h3>Upcoming Interviews</h3>{candidates.filter(c=>c.interviewDate).map(c=><div className="mini-row" key={c.id}><span>{c.fn} {c.ln}</span><b>{c.interviewDate}</b></div>)}</Card><Card><h3>Client Breakdown</h3>{jobs.map(j=><div className="mini-row" key={j.id}><span>{j.client}</span><b>{j.openings} opening{j.openings>1?'s':''}</b></div>)}</Card></div></>}
+import {MAIN_STAGES, ROLE_ICONS, ROLES, STAGE_COLORS} from '../constants';
+import {Badge, Button, Card} from '../components/ui';
+import {actions} from '../store/recruitSlice';
+import {useAppDispatch, useAppSelector} from '../store/hooks';
+
+export function Dashboard() {
+    const dispatch = useAppDispatch();
+    const {candidates, jobs, ui} = useAppSelector(state => state.recruit);
+    const dashboard = useAppSelector(state => state.dashboard);
+    const total = dashboard.stats?.totalCandidates ?? candidates.length;
+    const placed = dashboard.stats?.placed ?? candidates.filter(candidate => candidate.stage === 'Placed').length;
+    const active = dashboard.stats?.inPipeline ?? candidates.filter(candidate => !['Placed', 'Rejected', 'Withdrawn'].includes(candidate.stage)).length;
+    const open = dashboard.stats?.openRoles ?? jobs.filter(job => job.status === 'Open').length;
+    const recent = dashboard.recentCandidates.length ? dashboard.recentCandidates : [...candidates].sort((a, b) => String(b.id).localeCompare(String(a.id))).slice(0, 5);
+
+    const stat = (value: number, label: string, sub: string, onClick: () => void) => (
+        <Card className="stat-card clickable" onClick={onClick}>
+            <div className="stat-card-val">{dashboard.loading ? '...' : value}</div>
+            <div className="stat-card-lbl">{label}</div>
+            <div className="stat-card-sub">{sub}</div>
+        </Card>
+    );
+
+    return (
+        <>
+            <div className="toolbar">
+                <select className="fsel" value={ui.dateRange}
+                        onChange={event => dispatch(actions.setDateRange(event.target.value as typeof ui.dateRange))}>
+                    <option value="7d">Last 7 days</option>
+                    <option value="30d">Last 30 days</option>
+                    <option value="90d">Last 90 days</option>
+                    <option value="all">All time</option>
+                </select>
+                <Button onClick={() => alert('CSV export preview')}>Export</Button>
+                <Button onClick={() => dispatch(actions.resetDemoData())}>Reset demo data</Button>
+            </div>
+            <div className="stats-row">
+                {stat(total, 'Total Candidates', 'Backend dashboard total', () => dispatch(actions.setView('candidates')))}
+                {stat(placed, 'Placed', 'Backend placed count', () => dispatch(actions.setStageFilter('Placed')))}
+                {stat(active, 'In Pipeline', 'Backend active pipeline', () => dispatch(actions.setView('pipeline')))}
+                {stat(open, 'Open Roles', 'Backend open roles', () => dispatch(actions.setView('jobs')))}
+            </div>
+            <div className="dash-grid">
+                <Card>
+                    <h3>Pipeline Conversion</h3>
+                    {MAIN_STAGES.map(stage => {
+                        const count = dashboard.pipelineStats.find(item => item.stage === stage || String(item.stage).replace(/_/g, ' ') === stage.toUpperCase())?.count ?? candidates.filter(candidate => candidate.stage === stage).length;
+                        const pct = total ? Math.round(count / total * 100) : 0;
+                        const [color] = STAGE_COLORS[stage];
+                        return <div className="bar-row" key={stage} onClick={() => {
+                            dispatch(actions.setStageFilter(stage));
+                            dispatch(actions.setView('candidates'));
+                        }}><span>{stage}</span>
+                            <div><i style={{width: `${pct}%`, background: color}}/></div>
+                            <b style={{color}}>{pct}%</b></div>;
+                    })}
+                </Card>
+                <Card>
+                    <h3>By Role</h3>
+                    {ROLES.map(role => <div key={role} className="mini-row"
+                                            onClick={() => dispatch(actions.setRoleFilter(role))}>
+                        <span>{ROLE_ICONS[role]} {role}</span><b>{dashboard.roleStats.find(item => item.role === role)?.count ?? candidates.filter(candidate => candidate.role === role).length}</b>
+                    </div>)}
+                </Card>
+                <Card>
+                    <h3>Source Breakdown</h3>
+                    {['LinkedIn', 'Referral', 'Website', 'Indeed', 'Database'].map(source => <div className="mini-row"
+                                                                                                  key={source}>
+                        <span>{source}</span><b>{candidates.filter(candidate => candidate.source === source).length}</b>
+                    </div>)}
+                </Card>
+                <Card>
+                    <h3>Recent Candidates</h3>
+                    {recent.map(candidate => <div className="candidate-line" key={candidate.id}
+                                                  onClick={() => dispatch(actions.selectCandidate(candidate.id))}>
+                        <div className="avatar-mini">{candidate.fn[0]}{candidate.ln[0]}</div>
+                        <div><b>{candidate.fn} {candidate.ln}</b><p>{candidate.role} - {candidate.lastActivity}</p>
+                        </div>
+                        <Badge stage={candidate.stage}>{candidate.stage}</Badge></div>)}
+                    <Button onClick={() => dispatch(actions.setView('candidates'))}>View all recent candidates</Button>
+                </Card>
+                <Card><h3>Upcoming
+                    Interviews</h3>{candidates.filter(candidate => candidate.interviewDate).map(candidate => <div
+                    className="mini-row" key={candidate.id}>
+                    <span>{candidate.fn} {candidate.ln}</span><b>{candidate.interviewDate}</b></div>)}</Card>
+                <Card><h3>Client Breakdown</h3>{jobs.map(job => <div className="mini-row" key={job.id}>
+                    <span>{job.client}</span><b>{job.openings} opening{job.openings > 1 ? 's' : ''}</b></div>)}</Card>
+            </div>
+        </>
+    );
+}

@@ -1,15 +1,195 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { candidates, jobs } from '../data/seed';
-import type { Candidate, JobRole, Role, Stage, UiState, View } from '../types';
-interface State { candidates: Candidate[]; jobs: JobRole[]; ui: UiState; }
-const persisted = <T,>(key:string, fallback:T):T => { try { return JSON.parse(localStorage.getItem(key)||'') as T } catch { return fallback } };
-const initialState: State = { candidates: persisted('cg_cands_v2', candidates), jobs: persisted('cg_jobs_v2', jobs), ui: {view:'dashboard',roleFilter:'',search:'',sidebarOpen:false,selectedCandidateId:null,editingCandidateId:null,selectedJobId:null,candidateModal:false,jobModal:false,dateRange:'30d',stageFilter:'',langFilter:'',sort:'newest',selectedIds:[],session:{user:'Ahmed Assimi',role:'Recruitment Admin',notifications:6,authenticated:true}} };
-const slice = createSlice({name:'recruit',initialState,reducers:{
- setView:(s,a:PayloadAction<View>)=>{s.ui.view=a.payload;s.ui.roleFilter='';s.ui.sidebarOpen=false}, setRoleFilter:(s,a:PayloadAction<Role>)=>{s.ui.view='candidates';s.ui.roleFilter=a.payload;s.ui.sidebarOpen=false}, setSearch:(s,a:PayloadAction<string>)=>{s.ui.search=a.payload}, clearSearch:s=>{s.ui.search=''}, toggleSidebar:s=>{s.ui.sidebarOpen=!s.ui.sidebarOpen}, closeSidebar:s=>{s.ui.sidebarOpen=false},
- openCandidateModal:(s,a:PayloadAction<number|undefined>)=>{s.ui.editingCandidateId=a.payload??null;s.ui.candidateModal=true}, closeCandidateModal:s=>{s.ui.candidateModal=false;s.ui.editingCandidateId=null}, openJobModal:(s,a:PayloadAction<string|undefined>)=>{s.ui.selectedJobId=a.payload??null;s.ui.jobModal=true}, closeJobModal:s=>{s.ui.jobModal=false;s.ui.selectedJobId=null}, selectCandidate:(s,a:PayloadAction<number|null>)=>{s.ui.selectedCandidateId=a.payload},
- addCandidate:(s,a:PayloadAction<Candidate>)=>{s.candidates.unshift(a.payload)}, updateCandidate:(s,a:PayloadAction<Candidate>)=>{s.candidates=s.candidates.map(c=>c.id===a.payload.id?a.payload:c)}, deleteCandidate:(s,a:PayloadAction<number>)=>{s.candidates=s.candidates.filter(c=>c.id!==a.payload);s.ui.selectedCandidateId=null},
- setStage:(s,a:PayloadAction<{id:number;stage:Stage;note?:string}>)=>{const c=s.candidates.find(x=>x.id===a.payload.id); if(c){c.stage=a.payload.stage;c.updated=new Date().toLocaleDateString('en-GB');c.lastActivity=`Moved to ${a.payload.stage}`;c.stageHistory.push({stage:a.payload.stage,date:new Date().toLocaleDateString('en-GB'),note:a.payload.note||'Stage updated'});}},
- addJob:(s,a:PayloadAction<JobRole>)=>{s.jobs.unshift(a.payload)}, updateJob:(s,a:PayloadAction<JobRole>)=>{s.jobs=s.jobs.map(j=>j.id===a.payload.id?a.payload:j)}, deleteJob:(s,a:PayloadAction<string>)=>{s.jobs=s.jobs.filter(j=>j.id!==a.payload)},
- setDateRange:(s,a:PayloadAction<UiState['dateRange']>)=>{s.ui.dateRange=a.payload}, setStageFilter:(s,a:PayloadAction<''|Stage>)=>{s.ui.stageFilter=a.payload}, setLangFilter:(s,a:PayloadAction<string>)=>{s.ui.langFilter=a.payload}, setSort:(s,a:PayloadAction<UiState['sort']>)=>{s.ui.sort=a.payload}, resetFilters:s=>{s.ui.stageFilter='';s.ui.langFilter='';s.ui.sort='newest'}, toggleSelect:(s,a:PayloadAction<number>)=>{s.ui.selectedIds=s.ui.selectedIds.includes(a.payload)?s.ui.selectedIds.filter(id=>id!==a.payload):[...s.ui.selectedIds,a.payload]}, clearSelection:s=>{s.ui.selectedIds=[]}, bulkStage:(s,a:PayloadAction<Stage>)=>{s.candidates=s.candidates.map(c=>s.ui.selectedIds.includes(c.id)?{...c,stage:a.payload,lastActivity:`Bulk moved to ${a.payload}`}:c);s.ui.selectedIds=[]}, resetDemoData:s=>{s.candidates=candidates;s.jobs=jobs}
-}});
-export const actions = slice.actions; export default slice.reducer;
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {candidates, jobs} from '../data/seed';
+import {candidateActions} from '../features/candidates/candidateSlice';
+import {jobRoleActions} from '../features/jobRoles/jobRoleSlice';
+import type {Candidate, EntityId, JobRole, Role, Stage, UiState, View} from '../types';
+
+interface State {
+    candidates: Candidate[];
+    jobs: JobRole[];
+    ui: UiState;
+}
+
+const initialState: State = {
+    candidates,
+    jobs,
+    ui: {
+        view: 'dashboard',
+        roleFilter: '',
+        search: '',
+        sidebarOpen: false,
+        selectedCandidateId: null,
+        editingCandidateId: null,
+        selectedJobId: null,
+        candidateModal: false,
+        jobModal: false,
+        dateRange: '30d',
+        stageFilter: '',
+        langFilter: '',
+        sort: 'newest',
+        selectedIds: [],
+        session: {user: 'Recruitment Admin', role: 'Recruitment Admin', notifications: 0, authenticated: false},
+    },
+};
+
+const slice = createSlice({
+    name: 'recruit',
+    initialState,
+    reducers: {
+        setView: (state, action: PayloadAction<View>) => {
+            state.ui.view = action.payload;
+            state.ui.roleFilter = '';
+            state.ui.sidebarOpen = false;
+        },
+        setRoleFilter: (state, action: PayloadAction<Role>) => {
+            state.ui.view = 'candidates';
+            state.ui.roleFilter = action.payload;
+            state.ui.sidebarOpen = false;
+        },
+        setSearch: (state, action: PayloadAction<string>) => {
+            state.ui.search = action.payload;
+        },
+        clearSearch: state => {
+            state.ui.search = '';
+        },
+        toggleSidebar: state => {
+            state.ui.sidebarOpen = !state.ui.sidebarOpen;
+        },
+        closeSidebar: state => {
+            state.ui.sidebarOpen = false;
+        },
+        openCandidateModal: (state, action: PayloadAction<EntityId | undefined>) => {
+            state.ui.editingCandidateId = action.payload ?? null;
+            state.ui.candidateModal = true;
+        },
+        closeCandidateModal: state => {
+            state.ui.candidateModal = false;
+            state.ui.editingCandidateId = null;
+        },
+        openJobModal: (state, action: PayloadAction<string | undefined>) => {
+            state.ui.selectedJobId = action.payload ?? null;
+            state.ui.jobModal = true;
+        },
+        closeJobModal: state => {
+            state.ui.jobModal = false;
+            state.ui.selectedJobId = null;
+        },
+        selectCandidate: (state, action: PayloadAction<EntityId | null>) => {
+            state.ui.selectedCandidateId = action.payload;
+        },
+        addCandidate: (state, action: PayloadAction<Candidate>) => {
+            state.candidates.unshift(action.payload);
+        },
+        updateCandidate: (state, action: PayloadAction<Candidate>) => {
+            state.candidates = state.candidates.map(candidate => candidate.id === action.payload.id ? action.payload : candidate);
+        },
+        deleteCandidate: (state, action: PayloadAction<EntityId>) => {
+            state.candidates = state.candidates.filter(candidate => candidate.id !== action.payload);
+            state.ui.selectedCandidateId = null;
+        },
+        setStage: (state, action: PayloadAction<{ id: EntityId; stage: Stage; note?: string }>) => {
+            const candidate = state.candidates.find(item => item.id === action.payload.id);
+            if (candidate) {
+                candidate.stage = action.payload.stage;
+                candidate.updated = new Date().toLocaleDateString('en-GB');
+                candidate.lastActivity = `Moved to ${action.payload.stage}`;
+                candidate.stageHistory.push({
+                    stage: action.payload.stage,
+                    date: new Date().toLocaleDateString('en-GB'),
+                    note: action.payload.note || 'Stage updated'
+                });
+            }
+        },
+        addJob: (state, action: PayloadAction<JobRole>) => {
+            state.jobs.unshift(action.payload);
+        },
+        updateJob: (state, action: PayloadAction<JobRole>) => {
+            state.jobs = state.jobs.map(job => job.id === action.payload.id ? action.payload : job);
+        },
+        deleteJob: (state, action: PayloadAction<string>) => {
+            state.jobs = state.jobs.filter(job => job.id !== action.payload);
+        },
+        setDateRange: (state, action: PayloadAction<UiState['dateRange']>) => {
+            state.ui.dateRange = action.payload;
+        },
+        setStageFilter: (state, action: PayloadAction<'' | Stage>) => {
+            state.ui.stageFilter = action.payload;
+        },
+        setLangFilter: (state, action: PayloadAction<string>) => {
+            state.ui.langFilter = action.payload;
+        },
+        setSort: (state, action: PayloadAction<UiState['sort']>) => {
+            state.ui.sort = action.payload;
+        },
+        resetFilters: state => {
+            state.ui.stageFilter = '';
+            state.ui.langFilter = '';
+            state.ui.sort = 'newest';
+        },
+        toggleSelect: (state, action: PayloadAction<EntityId>) => {
+            state.ui.selectedIds = state.ui.selectedIds.includes(action.payload)
+                ? state.ui.selectedIds.filter(id => id !== action.payload)
+                : [...state.ui.selectedIds, action.payload];
+        },
+        clearSelection: state => {
+            state.ui.selectedIds = [];
+        },
+        bulkStage: (state, action: PayloadAction<Stage>) => {
+            state.candidates = state.candidates.map(candidate => state.ui.selectedIds.includes(candidate.id) ? {
+                ...candidate,
+                stage: action.payload,
+                lastActivity: `Bulk moved to ${action.payload}`
+            } : candidate);
+            state.ui.selectedIds = [];
+        },
+        resetDemoData: state => {
+            state.candidates = candidates;
+            state.jobs = jobs;
+        },
+        setSessionUser: (state, action: PayloadAction<{ user: string; role: string; authenticated: boolean }>) => {
+            state.ui.session.user = action.payload.user;
+            state.ui.session.role = action.payload.role;
+            state.ui.session.authenticated = action.payload.authenticated;
+        },
+    },
+    extraReducers: builder => {
+        builder
+            .addCase(candidateActions.fetchCandidatesSuccess, (state, action) => {
+                state.candidates = action.payload;
+            })
+            .addCase(candidateActions.fetchCandidateByIdSuccess, (state, action) => {
+                state.candidates = upsertCandidate(state.candidates, action.payload);
+            })
+            .addCase(candidateActions.createCandidateSuccess, (state, action) => {
+                state.candidates = upsertCandidate(state.candidates.filter(candidate => candidate.id !== action.payload.id), action.payload);
+            })
+            .addCase(candidateActions.updateCandidateSuccess, (state, action) => {
+                state.candidates = upsertCandidate(state.candidates, action.payload);
+            })
+            .addCase(candidateActions.deleteCandidateSuccess, (state, action) => {
+                state.candidates = state.candidates.filter(candidate => candidate.id !== action.payload);
+                state.ui.selectedCandidateId = null;
+            })
+            .addCase(candidateActions.changeCandidateStageSuccess, (state, action) => {
+                state.candidates = upsertCandidate(state.candidates, action.payload);
+            })
+            .addCase(jobRoleActions.fetchJobRolesSuccess, (state, action) => {
+                state.jobs = action.payload;
+            })
+            .addCase(jobRoleActions.createJobRoleSuccess, (state, action) => {
+                state.jobs = upsertJob(state.jobs.filter(job => job.id !== action.payload.id), action.payload);
+            })
+            .addCase(jobRoleActions.updateJobRoleSuccess, (state, action) => {
+                state.jobs = upsertJob(state.jobs, action.payload);
+            })
+            .addCase(jobRoleActions.deleteJobRoleSuccess, (state, action) => {
+                state.jobs = state.jobs.filter(job => job.id !== action.payload);
+            });
+    },
+});
+
+const upsertCandidate = (items: Candidate[], candidate: Candidate) => items.some(item => item.id === candidate.id) ? items.map(item => item.id === candidate.id ? candidate : item) : [candidate, ...items];
+const upsertJob = (items: JobRole[], job: JobRole) => items.some(item => item.id === job.id) ? items.map(item => item.id === job.id ? job : item) : [job, ...items];
+
+export const actions = slice.actions;
+export default slice.reducer;

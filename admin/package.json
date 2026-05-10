@@ -3,7 +3,24 @@
   "private": true,
   "version": "2.0.0",
   "type": "module",
-  "scripts": {"dev":"vite","build":"tsc -b && vite build","preview":"vite preview"},
-  "dependencies": {"@reduxjs/toolkit":"latest","react":"latest","react-dom":"latest","react-redux":"latest","redux-saga":"latest","typescript":"latest","vite":"latest","@vitejs/plugin-react":"latest"},
-  "devDependencies": {"@types/react":"latest","@types/react-dom":"latest"}
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "latest",
+    "axios": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-redux": "latest",
+    "redux-saga": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "@vitejs/plugin-react": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest"
+  }
 }

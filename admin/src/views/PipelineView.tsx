@@ -1,2 +1,92 @@
-import { actions } from '../store/recruitSlice';import { useAppDispatch,useAppSelector } from '../store/hooks';import { MAIN_STAGES,STAGE_COLORS } from '../constants';import { Badge,Button } from '../components/ui';
-export function PipelineView(){const d=useAppDispatch();const {candidates,ui,jobs}=useAppSelector(s=>s.recruit);const stages=MAIN_STAGES;const q=ui.search.toLowerCase();const move=(id:number,dir:number)=>{const c=candidates.find(x=>x.id===id);if(!c)return;const i=stages.indexOf(c.stage as any);d(actions.setStage({id,stage:stages[Math.max(0,Math.min(stages.length-1,i+dir))]}))};return <><div className="toolbar"><Button onClick={()=>alert('Drag & drop visual placeholder: use action buttons in this UI demo')}>↕ Drag & drop mode</Button><Button onClick={()=>alert('Custom stages preview')}>Customize stages</Button><div className="legend">{stages.map(s=><span key={s}><i style={{background:STAGE_COLORS[s][0]}}/> {s}</span>)}</div></div><div className="pipeline">{stages.map(s=>{const [col]=STAGE_COLORS[s];const items=candidates.filter(c=>c.stage===s&&(c.fn+c.ln+c.email+c.phone+c.role).toLowerCase().includes(q)).sort((a,b)=>b.rat-a.rat);return <div className="pipe-col" key={s}><div className="pipe-col-hdr"><div className="pipe-col-title" style={{color:col}}>{s.toUpperCase()}</div><div className="pipe-count">{items.length}</div></div>{items.map(c=>{const job=jobs.find(j=>j.id===c.assignedJobId);return <div className="cand-tile" key={c.id} onClick={()=>d(actions.selectCandidate(c.id))}><div className="tile-top"><div><div className="tile-name">{c.fn} {c.ln}</div><div className="tile-role">{c.role}</div></div><Badge stage={c.stage}>{c.stage}</Badge></div><div className="tile-langs">{c.langs.map(l=><span className="lang" key={l}>{l}</span>)}</div><div className="tile-rating">{'★'.repeat(c.rat)}{'☆'.repeat(5-c.rat)}</div><p className="tile-mini">📎 {c.attachments.length} files · 🧾 {c.cv?'CV attached':'No CV'}</p><p className="tile-mini">🏢 {job?.client||'No assigned job'}</p><p className="tile-mini">⏱ {c.lastActivity}</p>{c.interviewDate&&<p className="tile-mini">🗓 {c.interviewDate}</p>}<div className="tile-btns"><button className="tile-btn" onClick={e=>{e.stopPropagation();move(c.id,-1)}}>← Back</button><button className="tile-btn adv" onClick={e=>{e.stopPropagation();move(c.id,1)}}>Advance →</button><button className="tile-btn danger" onClick={e=>{e.stopPropagation();d(actions.setStage({id:c.id,stage:'Rejected',note:'Rejected from board'}))}}>Reject</button></div></div>})}{!items.length&&<div className="col-empty">Drop candidates here</div>}</div>})}</div></>}
+import {MAIN_STAGES, STAGE_COLORS} from '../constants';
+import {Badge, Button} from '../components/ui';
+import {actions} from '../store/recruitSlice';
+import {useAppDispatch, useAppSelector} from '../store/hooks';
+import type {EntityId} from '../types';
+
+export function PipelineView() {
+    const dispatch = useAppDispatch();
+    const {candidates, ui, jobs} = useAppSelector(state => state.recruit);
+    const q = ui.search.toLowerCase();
+    const move = (id: EntityId, dir: number) => {
+        const candidate = candidates.find(item => item.id === id);
+        if (!candidate) return;
+        const currentIndex = MAIN_STAGES.indexOf(candidate.stage);
+        dispatch(actions.setStage({
+            id,
+            stage: MAIN_STAGES[Math.max(0, Math.min(MAIN_STAGES.length - 1, currentIndex + dir))]
+        }));
+    };
+
+    return (
+        <>
+            <div className="toolbar">
+                <Button onClick={() => alert('Drag & drop visual placeholder: use action buttons in this UI demo')}>Drag
+                    mode</Button>
+                <Button onClick={() => alert('Custom stages preview')}>Customize stages</Button>
+                <div className="legend">{MAIN_STAGES.map(stage => <span key={stage}><i
+                    style={{background: STAGE_COLORS[stage][0]}}/> {stage}</span>)}</div>
+            </div>
+            <div className="pipeline">
+                {MAIN_STAGES.map(stage => {
+                    const [color] = STAGE_COLORS[stage];
+                    const items = candidates.filter(candidate => candidate.stage === stage && (candidate.fn + candidate.ln + candidate.email + candidate.phone + candidate.role).toLowerCase().includes(q)).sort((a, b) => b.rat - a.rat);
+                    return (
+                        <div className="pipe-col" key={stage}>
+                            <div className="pipe-col-hdr">
+                                <div className="pipe-col-title" style={{color}}>{stage.toUpperCase()}</div>
+                                <div className="pipe-count">{items.length}</div>
+                            </div>
+                            {items.map(candidate => {
+                                const job = jobs.find(item => item.id === candidate.assignedJobId);
+                                return (
+                                    <div className="cand-tile" key={candidate.id}
+                                         onClick={() => dispatch(actions.selectCandidate(candidate.id))}>
+                                        <div className="tile-top">
+                                            <div>
+                                                <div className="tile-name">{candidate.fn} {candidate.ln}</div>
+                                                <div className="tile-role">{candidate.role}</div>
+                                            </div>
+                                            <Badge stage={candidate.stage}>{candidate.stage}</Badge></div>
+                                        <div className="tile-langs">{candidate.langs.map(language => <span
+                                            className="lang" key={language}>{language}</span>)}</div>
+                                        <div
+                                            className="tile-rating">{'*'.repeat(candidate.rat)}{'-'.repeat(5 - candidate.rat)}</div>
+                                        <p className="tile-mini">{candidate.attachments.length} files
+                                            - {candidate.cv ? 'CV attached' : 'No CV'}</p>
+                                        <p className="tile-mini">{job?.client || 'No assigned job'}</p>
+                                        <p className="tile-mini">{candidate.lastActivity}</p>
+                                        {candidate.interviewDate &&
+                                            <p className="tile-mini">{candidate.interviewDate}</p>}
+                                        <div className="tile-btns">
+                                            <button className="tile-btn" onClick={event => {
+                                                event.stopPropagation();
+                                                move(candidate.id, -1);
+                                            }}>Back
+                                            </button>
+                                            <button className="tile-btn adv" onClick={event => {
+                                                event.stopPropagation();
+                                                move(candidate.id, 1);
+                                            }}>Advance
+                                            </button>
+                                            <button className="tile-btn danger" onClick={event => {
+                                                event.stopPropagation();
+                                                dispatch(actions.setStage({
+                                                    id: candidate.id,
+                                                    stage: 'Rejected',
+                                                    note: 'Rejected from board'
+                                                }));
+                                            }}>Reject
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {!items.length && <div className="col-empty">Drop candidates here</div>}
+                        </div>
+                    );
+                })}
+            </div>
+        </>
+    );
+}
