@@ -1,3 +1,4 @@
+/* ===== index(1).html style block 1 ===== */
 :root {
     --ink: #0d0d0d;
     --paper: #f5f2ec;
@@ -1084,6 +1085,7 @@ footer {
     }
 }
 
+/* ===== index(1).html style block 2 ===== */
 .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
     background: transparent;
     color: #ccc;
@@ -1109,6 +1111,7 @@ footer {
     border-color: var(--gold)
 }
 
+/* ===== services(1).html style block 1 ===== */
 .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
     background: transparent;
     color: #ccc;
@@ -1134,6 +1137,7 @@ footer {
     border-color: var(--gold)
 }
 
+/* ===== services(1).html style block 2 ===== */
 :root {
     --ink: #0d0d0d;
     --paper: #f5f2ec;
@@ -2146,6 +2150,33 @@ footer {
     }
 }
 
+/* ===== pricing(1).html style block 1 ===== */
+.flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
+    background: transparent;
+    color: #ccc;
+    cursor: not-allowed;
+    text-decoration: line-through
+}
+
+.flatpickr-input {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--faint);
+    background: var(--cream);
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    transition: border-color .2s;
+    box-sizing: border-box;
+    cursor: pointer
+}
+
+.flatpickr-input:focus {
+    border-color: var(--gold)
+}
+
+/* ===== pricing(1).html style block 2 ===== */
 :root {
     --ink: #0d0d0d;
     --paper: #f5f2ec;
@@ -3303,108 +3334,51 @@ footer {
     }
 }
 
-/* React migration fixes */
-a {
-    cursor: none;
-}
-
-.route-page {
-    min-height: 100vh;
-}
-
-#mob-overlay.is-open {
-    display: flex !important;
-}
-
-.nav-logo img {
-    object-fit: contain;
-}
-
-@media (pointer: coarse), (max-width: 960px) {
-    #cur, #cur-ring {
-        display: none !important;
-    }
-
-    body, a, button, input, textarea, select {
-        cursor: auto !important;
-    }
-}
-
-@media (max-width: 640px) {
-    .nav-logo img {
-        height: 72px;
-    }
-
-    .page-hero {
-        padding: 8.5rem 1.5rem 4rem;
-    }
-
-    .hero {
-        min-height: auto;
-    }
-
-    .hero-left {
-        padding-top: 9rem;
-    }
-}
-
-/* v3 architecture and behavior polish */
-.nav-actions {
-    display: flex;
-    align-items: center;
-    gap: .875rem;
-}
-
-.cur,
-.cur-ring {
-    position: fixed;
-    left: 0;
-    top: 0;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    will-change: left, top, transform;
-}
-
-.cur {
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: var(--gold);
-}
-
-.cur-ring {
-    width: 34px;
-    height: 34px;
-    border-radius: 999px;
-    border: 1px solid rgba(184, 134, 44, .45);
-    transition: transform .16s ease, opacity .16s ease;
-    opacity: .9;
-}
-
-#mob-overlay {
-    display: flex !important;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px);
-    transition: opacity .28s ease, transform .28s ease, visibility .28s ease;
-    pointer-events: none;
-}
-
-#mob-overlay.is-open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    pointer-events: auto;
+/* ===== React v4 QA/model overrides ===== */
+:root {
+    --nav-logo-desktop: 95px;
+    --nav-logo-scrolled: 74px;
+    --nav-logo-mobile: 62px;
+    --container-max: 1180px;
+    --section-x-desktop: 4rem;
+    --section-x-mobile: 1.5rem;
 }
 
 body.menu-open {
     overflow: hidden;
 }
 
+.nav-logo img {
+    transition: height .28s ease, opacity .2s ease;
+}
+
+nav.scrolled .nav-logo img {
+    height: var(--nav-logo-scrolled);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#mob-overlay {
+    display: flex !important;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: opacity .28s ease, transform .28s ease;
+}
+
+#mob-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
 #mob-overlay a {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(12px);
     transition: opacity .28s ease, transform .28s ease, color .2s;
 }
 
@@ -3430,21 +3404,142 @@ body.menu-open {
 }
 
 #mob-overlay.is-open a:nth-of-type(5) {
-    transition-delay: .2s;
+    transition-delay: .20s;
 }
 
-@media (pointer: coarse), (max-width: 960px) {
-    .cur,
-    .cur-ring {
-        display: none !important;
+.route-page {
+    min-height: 60vh;
+}
+
+.route-page > nav, .route-page > footer, .route-page > #mob-overlay, .route-page > .cursor, .route-page > .cursor-dot {
+    display: none !important;
+}
+
+.route-page .page-hero:first-child, .route-page .hero:first-child {
+    margin-top: 0;
+}
+
+.pixel-container, .section-inner, .pricing-intro, .sb-inner, .faq-inner {
+    max-width: var(--container-max);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+img[loading="lazy"] {
+    content-visibility: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+    }
+}
+
+@media (max-width: 960px) {
+    nav, nav.scrolled {
+        padding: .9rem 1.5rem;
+        min-height: 82px;
     }
 
-    body,
-    a,
-    button,
-    input,
-    textarea,
-    select {
-        cursor: auto !important;
+    .nav-logo img, nav.scrolled .nav-logo img {
+        height: var(--nav-logo-mobile);
+    }
+
+    .nav-cta {
+        display: none;
+    }
+
+    #mob-overlay {
+        padding: 5rem 1.5rem 3rem;
+    }
+
+    #mob-overlay a {
+        font-size: clamp(30px, 10vw, 42px);
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    .hero-left {
+        padding: 9.5rem 1.5rem 4.5rem;
+    }
+
+    .hero-right {
+        min-height: 540px;
+    }
+
+    .hero-panel {
+        width: min(100%, 390px);
+        padding: 1.5rem;
+    }
+
+    .proof-strip {
+        padding: 1.75rem 1.5rem;
+    }
+
+    .proof-lbl {
+        border-right: 0;
+        margin-right: 0;
+        padding-right: 0;
+        width: 100%;
+    }
+
+    .why-section, .roles-section, .process-section, .contact-section, .vs-section, .pricing-section, .service-block {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .why-section, .contact-grid, .sb-inner, .sb-inner.flip {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        direction: ltr;
+    }
+
+    .roles-grid, .tiers-grid, .vs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .time-slots {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    section {
+        padding: 4.5rem 1.25rem;
+    }
+
+    .page-hero {
+        padding: 8.75rem 1.25rem 4rem;
+    }
+
+    .hero-actions, .hero-cta-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-primary, .btn-ghost, .btn-gold {
+        text-align: center;
+        width: 100%;
+    }
+
+    .hero-stats, .guarantee-strip {
+        grid-template-columns: 1fr;
+        display: grid;
+        gap: 0;
+    }
+
+    .hero-stats {
+        gap: 1.5rem;
+    }
+
+    .footer-links {
+        justify-content: center;
+        gap: 1rem 1.5rem;
     }
 }

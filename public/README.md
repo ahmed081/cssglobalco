@@ -1,18 +1,9 @@
-# CSS Global Co React v3
+# CSS Global Co — React TS v4 QA + Frozen Model
 
-React + TypeScript frontend clone of the provided HTML pages.
+This version focuses on steps 1 and 2:
 
-## What changed in v3
-
-- Reusable layout components: `Header`, `MobileMenu`, `Footer`, `AppLayout`
-- API-ready content structure in `src/data/pages.data.ts`
-- Typed CMS/page model in `src/types/content.types.ts`
-- Dynamic page renderer in `src/features/pageRenderer/DynamicPage.tsx`
-- SEO manager in `src/seo/Seo.tsx`
-- Theme tokens in `src/theme/tokens.ts`
-- Better mobile menu behavior and transitions
-- Reveal animations and pricing calculator behavior preserved
-- Logo and static assets preserved in `public/`
+1. Pixel-perfect QA improvements against the original HTML exports.
+2. A frozen, backend-ready content model for future API integration.
 
 ## Run
 
@@ -27,20 +18,16 @@ npm run dev
 npm run build
 ```
 
-## Future backend integration
+## Main improvements
 
-Currently, pages are loaded from static data:
+- Original CSS blocks from Home, Services, and Pricing are preserved.
+- React-specific overrides improve mobile header/menu behavior.
+- Logo is preserved in `public/logo.png`.
+- Mobile overlay uses body scroll locking and animated link transitions.
+- Content model contract added in `src/content/contentModel.ts`.
+- Frozen static page model added in `src/data/content/frozenPages.model.ts`.
+- QA docs added in `docs/pixel-perfect-qa.md` and `docs/content-model-contract.md`.
 
-```ts
-import {pages} from "./data/pages.data";
-```
+## Next recommended step
 
-Later, replace this source with an API call returning the same structure:
-
-```ts
-GET / api / pages / home
-GET / api / pages / services
-GET / api / pages / pricing
-```
-
-The renderer can keep the same contract.
+Add `contentService.getPage(slug)` so pages read from the frozen static model first, then later from Spring Boot APIs.
