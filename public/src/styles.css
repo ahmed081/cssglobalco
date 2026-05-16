@@ -118,7 +118,6 @@ nav.scrolled {
     padding: 10px 22px;
     text-decoration: none;
     transition: background .2s;
-    cursor: none
 }
 
 .nav-cta:hover {
@@ -238,7 +237,6 @@ section {
     padding: 14px 32px;
     text-decoration: none;
     transition: all .2s;
-    cursor: none;
     display: inline-block;
     border: none
 }
@@ -257,7 +255,6 @@ section {
     text-decoration: none;
     border: 1px solid var(--faint);
     transition: all .2s;
-    cursor: none;
     display: inline-block
 }
 
@@ -275,7 +272,6 @@ section {
     padding: 14px 32px;
     text-decoration: none;
     transition: background .2s;
-    cursor: none;
     display: inline-block;
     border: none
 }
@@ -1257,7 +1253,6 @@ nav.scrolled {
     padding: 10px 22px;
     text-decoration: none;
     transition: background .2s;
-    cursor: none
 }
 
 .nav-cta:hover {
@@ -1377,7 +1372,6 @@ section {
     padding: 14px 32px;
     text-decoration: none;
     transition: all .2s;
-    cursor: none;
     display: inline-block;
     border: none
 }
@@ -1396,7 +1390,6 @@ section {
     text-decoration: none;
     border: 1px solid var(--faint);
     transition: all .2s;
-    cursor: none;
     display: inline-block
 }
 
@@ -1414,7 +1407,6 @@ section {
     padding: 14px 32px;
     text-decoration: none;
     transition: background .2s;
-    cursor: none;
     display: inline-block;
     border: none
 }
@@ -2296,7 +2288,6 @@ nav.scrolled {
     padding: 10px 22px;
     text-decoration: none;
     transition: background .2s;
-    cursor: none
 }
 
 .nav-cta:hover {
@@ -2416,7 +2407,6 @@ section {
     padding: 14px 32px;
     text-decoration: none;
     transition: all .2s;
-    cursor: none;
     display: inline-block;
     border: none
 }
@@ -2435,7 +2425,6 @@ section {
     text-decoration: none;
     border: 1px solid var(--faint);
     transition: all .2s;
-    cursor: none;
     display: inline-block
 }
 
@@ -2453,7 +2442,6 @@ section {
     padding: 14px 32px;
     text-decoration: none;
     transition: background .2s;
-    cursor: none;
     display: inline-block;
     border: none
 }
@@ -3411,7 +3399,7 @@ nav.scrolled .nav-logo img {
     min-height: 60vh;
 }
 
-.route-page > nav, .route-page > footer, .route-page > #mob-overlay, .route-page > .cursor, .route-page > .cursor-dot {
+.route-page > nav, .route-page > footer, .route-page > #mob-overlay {
     display: none !important;
 }
 

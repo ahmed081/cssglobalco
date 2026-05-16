@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 const usCosts: Record<string, number> = { cs: 5200, sdr: 7000, it: 12000 };
 const cssCosts: Record<string, number> = { cs: 2800, sdr: 3800, it: 5500 };
@@ -34,22 +34,6 @@ function normalizeLinks() {
 }
 
 export function SiteEffects() {
-  const dot = useRef<HTMLDivElement | null>(null);
-  const ring = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const finePointer = window.matchMedia("(pointer: fine)").matches;
-    if (!finePointer) return;
-    const move = (event: MouseEvent) => {
-      const x = `${event.clientX}px`;
-      const y = `${event.clientY}px`;
-      if (dot.current) { dot.current.style.left = x; dot.current.style.top = y; }
-      if (ring.current) { ring.current.style.left = x; ring.current.style.top = y; }
-    };
-    window.addEventListener("mousemove", move, { passive: true });
-    return () => window.removeEventListener("mousemove", move);
-  }, []);
-
   useEffect(() => {
     normalizeLinks();
 
@@ -177,10 +161,5 @@ export function SiteEffects() {
     };
   }, []);
 
-  return (
-    <>
-      <div ref={dot} className="cur" />
-      <div ref={ring} className="cur-ring" />
-    </>
-  );
+  return null;
 }

@@ -18,7 +18,6 @@ Only browser-only behavior uses `"use client"`:
 
 - scroll navbar state
 - mobile menu open/close
-- custom cursor
 - reveal animation observer
 - pricing calculator
 - form mock submit behavior
