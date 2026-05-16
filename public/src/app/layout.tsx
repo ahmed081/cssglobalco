@@ -2,9 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/layout/AppShell";
 import { siteData } from "@/data/site.data";
+import { siteUrl } from "@/seo/metadata";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cssglobalco.com"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: siteData.name,
     template: "%s"
