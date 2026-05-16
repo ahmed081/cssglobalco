@@ -1,9 +1,21 @@
-# CSS Global Co — React TS v4 QA + Frozen Model
+# CSSGLOBALCO Next.js SSR Version
 
-This version focuses on steps 1 and 2:
+This version converts `cssglobalco-react-v4-qa-model` from Vite React into a Next.js App Router project.
 
-1. Pixel-perfect QA improvements against the original HTML exports.
-2. A frozen, backend-ready content model for future API integration.
+## What changed
+
+- Public website is now Next.js App Router.
+- `/`, `/services`, and `/pricing` are server-rendered routes.
+- Page components are async server components by default.
+- Interactive behavior is isolated in small client components:
+  - `Header`
+  - `MobileMenu`
+  - `SiteEffects`
+- Static content is still used for now through `contentService`.
+- Later, `contentService` can call a Spring Boot backend without changing UI components.
+- SEO metadata is generated per page using `generateMetadata`.
+- Logo is preserved in `public/logo.png`.
+- Original CSS and animations are preserved in `src/app/globals.css`.
 
 ## Run
 
@@ -16,18 +28,21 @@ npm run dev
 
 ```bash
 npm run build
+npm run start
 ```
 
-## Main improvements
+## Backend-ready boundary
 
-- Original CSS blocks from Home, Services, and Pricing are preserved.
-- React-specific overrides improve mobile header/menu behavior.
-- Logo is preserved in `public/logo.png`.
-- Mobile overlay uses body scroll locking and animated link transitions.
-- Content model contract added in `src/content/contentModel.ts`.
-- Frozen static page model added in `src/data/content/frozenPages.model.ts`.
-- QA docs added in `docs/pixel-perfect-qa.md` and `docs/content-model-contract.md`.
+Current:
 
-## Next recommended step
+```ts
+const page = await getPage("home");
+```
 
-Add `contentService.getPage(slug)` so pages read from the frozen static model first, then later from Spring Boot APIs.
+Later:
+
+```ts
+const page = await fetch(`${API_URL}/api/public/pages/home`).then(r => r.json());
+```
+
+Only `src/services/contentService.ts` needs to change.

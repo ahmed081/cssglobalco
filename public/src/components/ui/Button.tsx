@@ -1,15 +1,15 @@
-import type {ButtonData} from "../../types/content.types";
+import Link from "next/link";
+import type { ButtonData } from "@/types/content.types";
 
-const classByVariant = {
-    primary: "btn-primary",
-    ghost: "btn-ghost",
-    gold: "btn-gold",
-};
-
-export function Button({label, href, variant = "primary"}: ButtonData) {
-    return (
-        <a className={classByVariant[variant]} href={href}>
-            {label}
-        </a>
-    );
+export function Button({ data }: { data: ButtonData }) {
+  const className = data.variant === "ghost" ? "btn-ghost" : data.variant === "gold" ? "btn-gold" : "btn-primary";
+  return data.href.startsWith("http") ? (
+    <a className={className} href={data.href}>
+      {data.label}
+    </a>
+  ) : (
+    <Link className={className} href={data.href}>
+      {data.label}
+    </Link>
+  );
 }

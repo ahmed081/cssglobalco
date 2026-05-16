@@ -1,27 +1,50 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
+    "target": "ES2017",
     "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES2020"
+      "dom",
+      "dom.iterable",
+      "esnext"
     ],
     "allowJs": false,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "src"
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
-  "references": []
+  "exclude": [
+    "node_modules",
+    "vite.config.ts",
+    "src/vite-env.d.ts",
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/app/router/**",
+    "src/components/layout/AppLayout.tsx",
+    "src/components/layout/Header.tsx",
+    "src/components/layout/MobileMenu.tsx"
+  ]
 }
